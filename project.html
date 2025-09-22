@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎬 Movie Search</title>
+  <link rel="shortcut icon" href="https://sdmntprsouthcentralus.oaiusercontent.com/files/00000000-5e38-61f7-9055-686e541fe1f5/raw?se=2025-09-01T08%3A27%3A28Z&sp=r&sv=2024-08-04&sr=b&scid=133ba4d6-1e59-5d67-a48c-dcc71a0155e2&skoid=60f2aa1f-3685-43ee-be37-d8c8d08d5a64&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-08-31T22%3A43%3A39Z&ske=2025-09-01T22%3A43%3A39Z&sks=b&skv=2024-08-04&sig=HkJy9QoWI5tX7gt%2BBhUP8qBOhNfv7K7AZcfXVl5P6ck%3D" type="image/x-icon">
+  <link rel="stylesheet" href="script.css" />
+</head>
+<body>  
+  <h1>🎬 Movie Search</h1>
+  <input type="text" id="movieTitle" placeholder="Enter movie name please " />
+  <button onclick="searchMovie()">Search</button>
+
+  <div id="movieResult"></div>
+
+
+  <script>
+  async function searchMovie() {
+    const title = document.getElementById("movieTitle").value;
+    const apiKey = "7defaeaa";
+    const url = `http://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const container = document.getElementById("movieResult");
+
+    if (data.Response === "False") {    
+      container.innerHTML = `<p>  Movie not found. Try another title.</p>`;
+    } else {
+      const rating = parseFloat(data.imdbRating);
+      let recommendation = "";
+
+      // Generate recommendation message
+      if (rating > 7) {
+        recommendation = " <strong>Must watch this movie!</strong>";
+      } else if (rating > 6) {
+        recommendation = " <strong>Maybe   watch this movie too.</strong>";
+      } else {
+        recommendation = " <strong>Not recommended to watch this movie.</strong>";
+      }
+
+      container.innerHTML = `
+        <h2>${data.Title} (${data.Year})</h2>
+        <img src="${data.Poster !== "N/A" ? data.Poster : ""}" alt="Poster" />
+        <p><strong>IMDb Rating:</strong>  ${data.imdbRating}</p>
+        <p><strong>Plot:</strong> ${data.Plot}</p>
+        <p style="margin-top: 15px; font-size: 18px;">${recommendation}</p>
+      `;
+    }
+  }
+</script>
+
+</body>
+</html>
